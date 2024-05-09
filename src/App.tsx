@@ -1,4 +1,5 @@
 import { Header } from "./components/Header";
+import { WelcomeModal } from "./components/WelcomeModal/WelcomeModal";
 
 function App() {
   return (
@@ -6,7 +7,7 @@ function App() {
       <div className="w-screen h-screen flex justify-center">
         <div className="flex flex-col gap-9">
           <Header />
-          <div className="w-6 h-6 bg-red-600" />
+          <WelcomeModal />
         </div>
       </div>
     </>
