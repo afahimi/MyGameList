@@ -11,9 +11,10 @@ title_count = 79480
 driver = webdriver.Chrome(options=options)
 driver.get('https://myvideogamelist.com/platforms')
 
-games = dict()
+with open('./titles/games.json', 'r') as f:
+    data = json.load(f)
 
-for i in range(1, title_count):
+for i in range(28672, title_count):
     try:
         driver.get(f"https://myvideogamelist.com/game/{i}")
 
@@ -21,16 +22,7 @@ for i in range(1, title_count):
 
         title = content_elements[0].find_element(By.TAG_NAME, 'h3').text
         if title in games:
-            info = driver.find_elements(By.CLASS_NAME, 'row.mt-5')
-
-            elements = []
-            for element in info:
-                elements.append(element.text)
-            
-            for element in elements:
-                items = element.split('\n')
-                for i in range(len(items) - 1):
-                    games[title][items[i]] = items[i + 1]
+            continue
         else:
             games[title] = dict()
 
@@ -48,7 +40,7 @@ for i in range(1, title_count):
                     if i + 1 < len(items):
                         games[title][items[i]] = items[i + 1]
 
-            with open('titles/games.json', 'w') as f:
+            with open('./titles/games.json', 'w') as f:
                 json.dump(games, f, indent=4)
             
             image = driver.find_element(By.CLASS_NAME, 'img-fluid.img-thumbnail').get_attribute('src')
@@ -58,9 +50,9 @@ for i in range(1, title_count):
             with open(f'titles/images/{safe_title}.png', 'wb') as f:
                 f.write(driver.find_element(By.TAG_NAME, 'img').screenshot_as_png)
             
-            print(f'{title} has been scraped')
+            # print(f'{title} has been scraped')
     except Exception as e:
-        print(f"An error occurred: {e}")
+        # print(f"An error occurred: {e}")
         continue
 
 driver.quit()
