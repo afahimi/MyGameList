@@ -22,12 +22,17 @@ await client.connect();
 app.use(cors());
 app.use(express.json());
 
-app.get("/titles", async (req, res) => {
-  console.log("GET /titles");
+app.post("/search", async (req, res) => {
+  console.log("POST /search");
+  const query = req.body.query;
+
+  console.log("query: ", query);
+
   try {
     const result = await client.query(
-      "SELECT distinct title from game order by title asc"
+      `SELECT distinct title, publisher, release_date from game where LOWER(title) like LOWER('%${query}%') order by title`
     );
+    console.log(result.rows);
     res.json(result.rows);
   } catch (err) {
     console.error(err);

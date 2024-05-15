@@ -1,25 +1,18 @@
 import { Header } from "./components/Header";
 import { WelcomeModal } from "./components/WelcomeModal/WelcomeModal";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function App() {
-  const [titles, setTitles] = useState<string[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:3000/titles")
       .then((response) => response.json())
       .then((data) => data.map((item: { title: string }) => item.title))
-      .then((data) => {
-        setTitles(data);
-      })
+      .then((data) => console.log(data))
       .catch((error) => {
         console.error('Error:', error);
       });
   }, []);
-
-  useEffect(() => {
-    console.log(titles);
-  }, [titles]);
 
   return (
     <>
