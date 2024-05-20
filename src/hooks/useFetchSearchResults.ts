@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type UseFetchSearchResultsReturn = [Record<string,string>, (searchQuery: string) => Promise<void>];
+type UseFetchSearchResultsReturn = [Record<string,Record<string, string>>, (searchQuery: string) => Promise<void>];
 
 const useFetchSearchResults = (): UseFetchSearchResultsReturn => {
   const [searchResults, setSearchResults] = useState<Record<string,string>>({});

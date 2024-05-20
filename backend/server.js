@@ -30,7 +30,7 @@ app.post("/search", async (req, res) => {
 
   try {
     const result = await client.query(
-      `SELECT distinct title, publisher, release_date from game where LOWER(title) like LOWER('%${query}%') order by title`
+      `SELECT distinct title, publisher, release_date, description from game where LOWER(title) like LOWER('%${query}%') order by title`
     );
     console.log(result.rows);
     res.json(result.rows);
@@ -39,6 +39,8 @@ app.post("/search", async (req, res) => {
     res.send("Error " + err);
   }
 });
+
+app.use('/images' , express.static('./images'))
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
