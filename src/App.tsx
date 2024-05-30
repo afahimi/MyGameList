@@ -2,6 +2,7 @@ import { Header } from "./components/Header";
 import { WelcomeModal } from "./components/WelcomeModal/WelcomeModal";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SearchResults } from "./components/SearchResults/SearchResults";
+import { LoginPage } from "./components/Authentication/LoginPage";
 import { useEffect } from "react";
 
 function App() {
@@ -18,12 +19,13 @@ function App() {
   return (
     <>
       <div className="w-screen h-screen flex justify-center">
-        <div className="flex flex-col gap-9">
-          <Header />
+        <div className="flex flex-col gap-9 w-screen">
           <BrowserRouter>
+            <Header />
             <Routes>
               <Route path="/" element={<WelcomeModal />} />
               <Route path="/search" element={<SearchResults />} />
+              <Route path="/login" element={<LoginPage />} />
             </Routes>
           </BrowserRouter>
         </div>

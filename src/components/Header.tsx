@@ -1,6 +1,10 @@
 import ControllerLogo from "../assets/game_icon.png";
+import { useNavigate } from 'react-router-dom';
+
 
 export const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-screen h-28 bg-gray-400 flex flex-row items-center justify-between shadow-lg">
       <div className="flex gap-4">
@@ -31,11 +35,9 @@ export const Header = () => {
         </div>
       </div>
       <div className="flex gap-12 mr-20">
-        <button className="w-24 h-10 bg-gray-300 rounded-md hover:bg-gray-200 transition duration-200 ease-in-out">
+        <button className="w-24 h-10 bg-gray-300 rounded-md hover:bg-gray-200 transition duration-200 ease-in-out"
+          onClick={() => navigate('/login')}>
           Login
-        </button>
-        <button className="w-24 h-10 bg-gray-300 rounded-md hover:bg-gray-200 transition duration-200 ease-in-out">
-          Sign Up
         </button>
       </div>
     </div>
