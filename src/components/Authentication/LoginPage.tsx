@@ -1,11 +1,6 @@
 import { useState } from "react";
 import * as Yup from "yup";
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-} from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertTitle } from "@chakra-ui/react";
 
 enum AuthMode {
   Register = "Register",
@@ -34,7 +29,16 @@ export const LoginPage = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
+    username: Yup.string()
+      .required("Username is required")
+      .min(5, "Username must be at least 5 characters"),
+    email: Yup.string()
+        .when("authMode", {
+            is: () => authMode === AuthMode.Register,
+            then: () => Yup.string().email("Invalid email").required("Email is required"),
+            otherwise: () => Yup.string().notRequired(),
+        })
+        .email("Invalid email"),
     password: Yup.string().required("Password is required"),
     re_enterPassword: Yup.string().when("authMode", {
       is: () => authMode === AuthMode.Register,
@@ -69,7 +73,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="flex h-3/4 w-screen justify-center items-center flex flex-col">
+    <div className="h-4/5 w-screen justify-center items-center flex flex-col">
       <form
         className="flex flex-col gap-4 bg-gray-300 w-1/3 h-3/4 p-10 rounded-md shadow-md"
         onSubmit={handleSubmit}
@@ -91,6 +95,22 @@ export const LoginPage = () => {
               className="p-2 rounded-md border-2 border-gray-300 transition ease-in-out duration-200 focus:outline-none focus:border-blue-500"
             />
           </div>
+          {authMode === AuthMode.Register && (
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="text-lg font-semibold">
+                Email
+              </label>
+              <input
+                type="text"
+                id="email"
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                value={formData.email}
+                className="p-2 rounded-md border-2 border-gray-300 transition ease-in-out duration-200 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             <label htmlFor="password" className="text-lg font-semibold">
               Password

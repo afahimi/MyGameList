@@ -27,10 +27,8 @@ CREATE TABLE Platform_Game(
 
 CREATE TABLE Users(
     username VARCHAR(50) PRIMARY KEY,
-    hashed_password VARCHAR(60),
-    email VARCHAR(50),
-    first_name VARCHAR(50),
-    last_name VARCHAR(50)
+    hashed_password VARCHAR(60) NOT NULL,
+    email VARCHAR(50) NOT NULL,
 );
 
 CREATE TABLE Review(
