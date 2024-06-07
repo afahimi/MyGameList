@@ -19,6 +19,7 @@ export const LoginPage = () => {
   const [error, setError] = useState<Record<string, string | boolean>>({
     isError: false,
     message: "",
+    status: "error",
   });
 
   const handleChangeAuthMode = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,12 +34,13 @@ export const LoginPage = () => {
       .required("Username is required")
       .min(5, "Username must be at least 5 characters"),
     email: Yup.string()
-        .when("authMode", {
-            is: () => authMode === AuthMode.Register,
-            then: () => Yup.string().email("Invalid email").required("Email is required"),
-            otherwise: () => Yup.string().notRequired(),
-        })
-        .email("Invalid email"),
+      .when("authMode", {
+        is: () => authMode === AuthMode.Register,
+        then: () =>
+          Yup.string().email("Invalid email").required("Email is required"),
+        otherwise: () => Yup.string().notRequired(),
+      })
+      .email("Invalid email"),
     password: Yup.string().required("Password is required"),
     re_enterPassword: Yup.string().when("authMode", {
       is: () => authMode === AuthMode.Register,
@@ -54,7 +56,23 @@ export const LoginPage = () => {
     e.preventDefault();
     try {
       await validationSchema.validate(formData, { abortEarly: false });
-      console.log("Form data is valid");
+      const response = await fetch(
+        `http://localhost:3000/${authMode.toLowerCase()}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (authMode === AuthMode.Register) {
+        if (response.ok) {
+          console.log("Successfully registered");
+          setSuccessState("Successfully registered");
+          setAuthMode(AuthMode.Login);
+        }
+      }
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         setErrorState(error.errors.join(", "));
@@ -62,6 +80,24 @@ export const LoginPage = () => {
         console.error(error);
       }
     }
+  };
+
+  const setSuccessState = (message: string) => {
+    setError((prev) => ({
+      ...prev,
+      message,
+      isError: true,
+      status: "success",
+    }));
+
+    setTimeout(() => {
+      setError((prev) => ({
+        ...prev,
+        message: "",
+        isError: false,
+        status: "error",
+      }));
+    }, 5000);
   };
 
   const setErrorState = (message: string) => {
@@ -163,7 +199,7 @@ export const LoginPage = () => {
       </form>
       {error.isError && (
         <div className="absolute bottom-0 w-screen">
-          <Alert status="error" className="rounded-md">
+          <Alert status={error.status} className="rounded-md">
             <AlertIcon />
             <AlertTitle mr={2}>{error.message}</AlertTitle>
           </Alert>
