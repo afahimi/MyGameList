@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 import pg from "pg";
 import dotenv from "dotenv";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY =
@@ -57,6 +57,7 @@ app.post("/login", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+      console.log("User not found");
       return res.status(400).json({ message: "User not found" });
     }
 
@@ -75,8 +76,18 @@ app.post("/login", async (req, res) => {
       SECRET_KEY,
       { expiresIn: "1h" }
     );
-    
-    res.status(200).json({ token });
+
+    const response = {
+      token,
+      user: {
+        username: user.username,
+        email: user.email,
+      },
+    };
+
+    console.log("token: ", token);
+
+    res.status(200).json(response);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });

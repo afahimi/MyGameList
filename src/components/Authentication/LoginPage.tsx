@@ -52,11 +52,13 @@ export const LoginPage = () => {
     }),
   });
 
+  type MyResponse = Response & { token?: string };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await validationSchema.validate(formData, { abortEarly: false });
-      const response = await fetch(
+      const response: MyResponse = await fetch(
         `http://localhost:3000/${authMode.toLowerCase()}`,
         {
           method: "POST",
@@ -66,11 +68,19 @@ export const LoginPage = () => {
           body: JSON.stringify(formData),
         }
       );
+      const data = await response.json();
       if (authMode === AuthMode.Register) {
         if (response.ok) {
           console.log("Successfully registered");
           setSuccessState("Successfully registered");
           setAuthMode(AuthMode.Login);
+        }
+      } else if (authMode === AuthMode.Login) {
+        if (response.ok) {
+          console.log("Successfully logged in");
+          setSuccessState("Successfully logged in");
+          console.log("response: ", data)
+          console.log("token: ", data.token)
         }
       }
     } catch (error) {
