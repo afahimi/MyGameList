@@ -1,9 +1,17 @@
 import ControllerLogo from "../assets/game_icon.png";
-import { useNavigate } from 'react-router-dom';
-
+import ProfilePicture from "../assets/pfp.jpg";
+import { useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { LoginContext } from "../contexts/LoginContext";
 
 export const Header = () => {
   const navigate = useNavigate();
+
+  const { loginToken, clearToken } = useContext(LoginContext);
+
+  useEffect(() => {
+    console.log("token value in header: ", loginToken);
+  }, [loginToken]);
 
   return (
     <div className="w-screen h-28 bg-gray-400 flex flex-row items-center justify-between shadow-lg">
@@ -34,11 +42,28 @@ export const Header = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-12 mr-20">
-        <button className="w-24 h-10 bg-gray-300 rounded-md hover:bg-gray-200 transition duration-200 ease-in-out"
-          onClick={() => navigate('/login')}>
-          Login
-        </button>
+      <div className="flex gap-10 mr-20 items-center">
+        {loginToken === "" ? (
+          <button
+            className="w-24 h-10 bg-gray-300 rounded-md hover:bg-gray-200 transition duration-200 ease-in-out"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
+        ) : (
+          <>
+          <img src={ProfilePicture} alt="Profile Picture" className="w-10 h-10 rounded-full" />
+            <button
+              className="w-24 h-10 bg-gray-300 rounded-md hover:bg-gray-200 transition duration-200 ease-in-out"
+              onClick={() => {
+                navigate("/");
+                clearToken();
+              }}
+            >
+              Logout
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

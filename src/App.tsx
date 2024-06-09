@@ -1,35 +1,49 @@
 import { Header } from "./components/Header";
 import { WelcomeModal } from "./components/WelcomeModal/WelcomeModal";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SearchResults } from "./components/SearchResults/SearchResults";
 import { LoginPage } from "./components/Authentication/LoginPage";
-import { useEffect } from "react";
+import { LoginContext } from "./contexts/LoginContext";
+import { useState, useEffect } from "react";
 
 function App() {
+  const [loginToken, setLoginToken] = useState<string>("");
+
   useEffect(() => {
-    fetch("http://localhost:3000/titles")
-      .then((response) => response.json())
-      .then((data) => data.map((item: { title: string }) => item.title))
-      .then((data) => console.log(data))
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    console.log("token updated: ", loginToken);
+    if (loginToken) {
+      localStorage.setItem("loginToken", loginToken);
+    }
+  }, [loginToken]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("loginToken");
+    if (token) {
+      setLoginToken(token);
+    }
   }, []);
+
+  const clearToken = () => {
+    localStorage.removeItem("loginToken");
+    setLoginToken("");
+  }
 
   return (
     <>
-      <div className="w-screen h-screen flex justify-center">
-        <div className="flex flex-col gap-9 w-screen">
-          <BrowserRouter>
-            <Header />
-            <Routes>
-              <Route path="/" element={<WelcomeModal />} />
-              <Route path="/search" element={<SearchResults />} />
-              <Route path="/login" element={<LoginPage />} />
-            </Routes>
-          </BrowserRouter>
+      <LoginContext.Provider value={{ loginToken, setLoginToken, clearToken }}>
+        <div className="w-screen h-screen flex justify-center">
+          <div className="flex flex-col gap-9 w-screen">
+            <BrowserRouter>
+              <Header />
+              <Routes>
+                <Route path="/" element={<WelcomeModal />} />
+                <Route path="/search" element={<SearchResults />} />
+                <Route path="/login" element={loginToken === "" ? <LoginPage /> : <Navigate to="/" />} />
+              </Routes>
+            </BrowserRouter>
+          </div>
         </div>
-      </div>
+      </LoginContext.Provider>
     </>
   );
 }

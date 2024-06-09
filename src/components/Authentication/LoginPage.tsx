@@ -1,6 +1,9 @@
 import { useState } from "react";
 import * as Yup from "yup";
 import { Alert, AlertIcon, AlertTitle } from "@chakra-ui/react";
+import { useContext } from "react";
+import { LoginContext } from "../../contexts/LoginContext";
+import { useNavigate } from "react-router-dom";
 
 enum AuthMode {
   Register = "Register",
@@ -8,6 +11,7 @@ enum AuthMode {
 }
 
 export const LoginPage = () => {
+  const { setLoginToken } = useContext(LoginContext);
   const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.Login);
 
   const [formData, setFormData] = useState<Record<string, string>>({
@@ -28,6 +32,8 @@ export const LoginPage = () => {
       prev === AuthMode.Login ? AuthMode.Register : AuthMode.Login
     );
   };
+
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -74,13 +80,16 @@ export const LoginPage = () => {
           console.log("Successfully registered");
           setSuccessState("Successfully registered");
           setAuthMode(AuthMode.Login);
+        } else {
+          setErrorState(data.message);
         }
       } else if (authMode === AuthMode.Login) {
         if (response.ok) {
           console.log("Successfully logged in");
-          setSuccessState("Successfully logged in");
-          console.log("response: ", data)
-          console.log("token: ", data.token)
+          setSuccessState("Successfully logged in", 1000);
+          setLoginToken(data.token);
+        } else {
+          setErrorState(data.message);
         }
       }
     } catch (error) {
@@ -92,7 +101,7 @@ export const LoginPage = () => {
     }
   };
 
-  const setSuccessState = (message: string) => {
+  const setSuccessState = (message: string, time: number = 5000) => {
     setError((prev) => ({
       ...prev,
       message,
@@ -107,7 +116,10 @@ export const LoginPage = () => {
         isError: false,
         status: "error",
       }));
-    }, 5000);
+      if (time === 1000) {
+        navigate("/");
+      }
+    }, time);
   };
 
   const setErrorState = (message: string) => {
