@@ -5,6 +5,7 @@ import { SearchResults } from "./components/SearchResults/SearchResults";
 import { LoginPage } from "./components/Authentication/LoginPage";
 import { LoginContext } from "./contexts/LoginContext";
 import { useState, useEffect } from "react";
+import { User } from "./components/User/User";
 
 function App() {
   const [loginToken, setLoginToken] = useState<string>("");
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/" element={<WelcomeModal />} />
                 <Route path="/search" element={<SearchResults />} />
                 <Route path="/login" element={loginToken === "" ? <LoginPage /> : <Navigate to="/" />} />
+                <Route path="/user" element={loginToken ? <User /> : <Navigate to="/login" />} />
               </Routes>
             </BrowserRouter>
           </div>

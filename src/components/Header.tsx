@@ -52,7 +52,13 @@ export const Header = () => {
           </button>
         ) : (
           <>
-          <img src={ProfilePicture} alt="Profile Picture" className="w-10 h-10 rounded-full" />
+            <button onClick={() => navigate("/user")}>
+              <img
+                src={ProfilePicture}
+                alt="Profile Picture"
+                className="w-10 h-10 rounded-full"
+              />
+            </button>
             <button
               className="w-24 h-10 bg-gray-300 rounded-md hover:bg-gray-200 transition duration-200 ease-in-out"
               onClick={() => {

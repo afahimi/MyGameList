@@ -8,7 +8,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY =
-  "6158fcd5fed72223ec67e831622418685be89a5098e7d766c5c7514370a43b68";
+  process.env.SECRET_KEY;
 
 const { Client } = pg;
 
