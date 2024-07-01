@@ -7,6 +7,8 @@ import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+dotenv.config();
+
 const SECRET_KEY =
   process.env.SECRET_KEY;
 
@@ -31,6 +33,7 @@ const authenticateJWT = (req, res, next) => {
 
       jwt.verify(token, SECRET_KEY, (err, user) => {
           if (err) {
+              console.error(err);
               return res.sendStatus(403);
           }
 
@@ -45,6 +48,11 @@ const authenticateJWT = (req, res, next) => {
 await client.connect();
 app.use(cors());
 app.use(express.json());
+
+app.get("/user-info", authenticateJWT, (req, res) => {
+  const decodedToken = jwt.decode(req.headers.authorization.split(' ')[1]);
+  res.json(decodedToken);
+});
 
 app.post("/register", async (req, res) => {
   console.log("POST /register");

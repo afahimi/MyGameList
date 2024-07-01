@@ -40,7 +40,7 @@ function App() {
                 <Route path="/" element={<WelcomeModal />} />
                 <Route path="/search" element={<SearchResults />} />
                 <Route path="/login" element={loginToken === "" ? <LoginPage /> : <Navigate to="/" />} />
-                <Route path="/user" element={loginToken ? <User /> : <Navigate to="/login" />} />
+                <Route path="/user" element={loginToken ? <User token={loginToken}/> : <Navigate to="/login" />} />
               </Routes>
             </BrowserRouter>
           </div>
