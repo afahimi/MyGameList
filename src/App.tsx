@@ -6,6 +6,7 @@ import { LoginPage } from "./components/Authentication/LoginPage";
 import { LoginContext } from "./contexts/LoginContext";
 import { useState, useEffect } from "react";
 import { User } from "./components/User/User";
+import { Game } from "./components/Game/Game";
 
 function App() {
   const [loginToken, setLoginToken] = useState<string>("");
@@ -41,6 +42,7 @@ function App() {
                 <Route path="/search" element={<SearchResults />} />
                 <Route path="/login" element={loginToken === "" ? <LoginPage /> : <Navigate to="/" />} />
                 <Route path="/user" element={loginToken ? <User token={loginToken}/> : <Navigate to="/login" />} />
+                <Route path="game/:title" element={<Game />} />
               </Routes>
             </BrowserRouter>
           </div>

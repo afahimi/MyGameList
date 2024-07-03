@@ -11,7 +11,7 @@ export const SearchResults = () => {
 
   useEffect(() => {
     fetch_results(query_params || "");
-  }, [query_params]);
+  }, [query_params, fetch_results]);
 
   return (
     <div>
