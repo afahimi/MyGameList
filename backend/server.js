@@ -129,7 +129,7 @@ app.post("/search", async (req, res) => {
 
   try {
     const result = await client.query(
-      `SELECT distinct title, publisher, release_date, description from game where LOWER(title) like LOWER($1) order by title`,
+      `SELECT distinct title, publisher, release_date, description, star_rating from game where LOWER(title) like LOWER($1) order by title`,
       [`%${query}%`]
     );
     // console.log(result.rows);

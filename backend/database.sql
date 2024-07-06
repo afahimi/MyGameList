@@ -14,7 +14,7 @@ CREATE TABLE Game(
     publisher VARCHAR(50),
     developer VARCHAR(50),
     genre VARCHAR(50),
-    star_rating DECIMAL(2,1)
+    star_rating DECIMAL(2,1) DEFAULT 0.0,
 );
 
 CREATE TABLE Platform_Game(
