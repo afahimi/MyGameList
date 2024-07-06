@@ -34,7 +34,7 @@ export const Game = () => {
     <div className="pt-8 px-28">
       <h1>{JSON.stringify(gameDetails)}</h1>
       <br />
-      <div className="flex flex-col gap-1 w-auto">
+      <div className="flex flex-col items-center gap-1 w-auto">
         <div className="w-1/3 h-auto bg-slate-300 rounded-lg shadow-md flex flex-col items-center px-5 py-4 gap-3">
           <h1 className="text-2xl font-bold">{"Game Info"}</h1>
           <div className="h-0.5 w-full bg-slate-400" />
