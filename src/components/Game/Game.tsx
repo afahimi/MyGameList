@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useFetchSearchResults from "../../hooks/useFetchSearchResults";
 import { InfoContainer } from "../helpers/InfoContainer";
 import { Textarea } from "@chakra-ui/react";
+import Typography from '@mui/material/Typography';
 
 const sanitizeTitle = (title: string) => {
   return title.replace(/ /g, "_").replace(/[:?!/\\*<>|]/g, "");
@@ -37,6 +38,8 @@ export const Game = () => {
   useEffect(() => {
     fetch_results(decodedTitle);
   }, [decodedTitle, fetch_results]);
+
+  const [value, setValue] = useState<number | null>(2);
 
   return (
     <div className="pt-8 px-28">
@@ -78,7 +81,7 @@ export const Game = () => {
             <p className="text-xl">{searchResults[0]?.description ?? ""}</p>
           </InfoContainer>
           <InfoContainer>
-            <h1 className="text-2xl font-bold">Reviews</h1>
+            <h1 className="text-2xl font-bold">Your Review</h1>
             <div className="h-0.5 w-full bg-slate-400" />
             <Textarea
               placeholder="Leave a review"
@@ -87,6 +90,16 @@ export const Game = () => {
               w="full"
               bg={"white"}
             />
+            {/* <Typography
+              component="legend"
+              className="text-xl font-semibold"
+              color="white"
+            >
+              Rating:
+            </Typography> */}
+            <button className="w-1/4 h-10 rounded-lg bg-slate-500 hover:bg-slate-400 transition ease-in-out text-white self-start">
+              Submit
+            </button>
           </InfoContainer>
         </div>
       </div>
