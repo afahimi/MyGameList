@@ -28,10 +28,10 @@ function App() {
   const clearToken = () => {
     localStorage.removeItem("loginToken");
     setLoginToken("");
-  }
+  };
+
 
   return (
-    <>
       <LoginContext.Provider value={{ loginToken, setLoginToken, clearToken }}>
         <div className="w-screen h-screen flex justify-center">
           <div className="flex flex-col gap-9 w-screen">
@@ -40,15 +40,28 @@ function App() {
               <Routes>
                 <Route path="/" element={<WelcomeModal />} />
                 <Route path="/search" element={<SearchResults />} />
-                <Route path="/login" element={loginToken === "" ? <LoginPage /> : <Navigate to="/" />} />
-                <Route path="/user" element={loginToken ? <User token={loginToken}/> : <Navigate to="/login" />} />
+                <Route
+                  path="/login"
+                  element={
+                    loginToken === "" ? <LoginPage /> : <Navigate to="/" />
+                  }
+                />
+                <Route
+                  path="/user"
+                  element={
+                    loginToken ? (
+                      <User token={loginToken} />
+                    ) : (
+                      <Navigate to="/login" />
+                    )
+                  }
+                />
                 <Route path="game/:title" element={<Game />} />
               </Routes>
             </BrowserRouter>
           </div>
         </div>
       </LoginContext.Provider>
-    </>
   );
 }
 

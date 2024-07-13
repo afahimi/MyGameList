@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import useFetchSearchResults from "../../hooks/useFetchSearchResults";
 import { InfoContainer } from "../helpers/InfoContainer";
 import { Textarea } from "@chakra-ui/react";
-import Typography from '@mui/material/Typography';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Rating from "@mui/material/Rating";
 
 const sanitizeTitle = (title: string) => {
   return title.replace(/ /g, "_").replace(/[:?!/\\*<>|]/g, "");
@@ -39,7 +40,9 @@ export const Game = () => {
     fetch_results(decodedTitle);
   }, [decodedTitle, fetch_results]);
 
-  const [value, setValue] = useState<number | null>(2);
+  const [starValue, setStarValue] = useState<number | null>(1);
+
+  const theme = createTheme();
 
   return (
     <div className="pt-8 px-28">
@@ -90,13 +93,17 @@ export const Game = () => {
               w="full"
               bg={"white"}
             />
-            {/* <Typography
-              component="legend"
-              className="text-xl font-semibold"
-              color="white"
-            >
-              Rating:
-            </Typography> */}
+            <div className="h-auto w-auto p-3 rounded-3xl shadow-sm bg-slate-200">
+              <ThemeProvider theme={theme}>
+                <Rating
+                  name="simple-controlled"
+                  value={starValue}
+                  onChange={(event, newValue) => {
+                    setStarValue(newValue);
+                  }}
+                />
+              </ThemeProvider>
+            </div>
             <button className="w-1/4 h-10 rounded-lg bg-slate-500 hover:bg-slate-400 transition ease-in-out text-white self-start">
               Submit
             </button>
