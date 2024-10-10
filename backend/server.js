@@ -4,13 +4,12 @@ import express from "express";
 import cors from "cors";
 import pg from "pg";
 import dotenv from "dotenv";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-const SECRET_KEY =
-  process.env.SECRET_KEY;
+const SECRET_KEY = process.env.SECRET_KEY;
 
 const { Client } = pg;
 
@@ -23,25 +22,26 @@ const client = new Client({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
 });
 
 const authenticateJWT = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (authHeader) {
-      const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
 
-      jwt.verify(token, SECRET_KEY, (err, user) => {
-          if (err) {
-              console.error(err);
-              return res.sendStatus(403);
-          }
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+      if (err) {
+        console.error(err);
+        return res.sendStatus(403);
+      }
 
-          req.user = user;
-          next();
-      });
+      req.user = user;
+      next();
+    });
   } else {
-      res.sendStatus(401);
+    res.sendStatus(401);
   }
 };
 
@@ -50,7 +50,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/user-info", authenticateJWT, (req, res) => {
-  const decodedToken = jwt.decode(req.headers.authorization.split(' ')[1]);
+  const decodedToken = jwt.decode(req.headers.authorization.split(" ")[1]);
   res.json(decodedToken);
 });
 
@@ -67,6 +67,81 @@ app.post("/register", async (req, res) => {
       [username, hashedPassword, email]
     );
     res.status(201).json({ message: "User created", user: newUser.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/add-review", authenticateJWT, async (req, res) => {
+  console.log("POST /add-review");
+  const { title, username, review, rating } = req.body;
+
+  console.log(title, username, review, rating);
+
+  try {
+    const game = await client.query(`SELECT id FROM game WHERE title = $1`, [
+      title,
+    ]);
+
+    if (game.rows.length === 0) {
+      return res.status(404).json({ message: "Game not found" });
+    }
+
+    const game_id = game.rows[0].id;
+
+    const existingReview = await client.query(
+      `SELECT * FROM review WHERE game_id = $1 AND username = $2`,
+      [game_id, username]
+    );
+
+    let newReview;
+    if (existingReview.rows.length > 0) {
+      newReview = await client.query(
+        `UPDATE review SET review = $1, rating = $2 WHERE game_id = $3 AND username = $4 RETURNING *`,
+        [review, rating, game_id, username]
+      );
+    } else {
+      newReview = await client.query(
+        `INSERT INTO review (game_id, username, review, rating, likes) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [game_id, username, review, rating, 0]
+      );
+    }
+
+    console.log(newReview.rows[0]);
+    res
+      .status(201)
+      .json({ message: "Review added", review: newReview.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/reviews", async (req, res) => {
+  console.log("GET /get-reviews");
+  const { title } = req.query;
+
+  console.log(title);
+
+  try {
+    const game = await client.query(`SELECT id FROM game WHERE title = $1`, [
+      title,
+    ]);
+
+    if (game.rows.length === 0) {
+      return res.status(404).json({ message: "Game not found" });
+    }
+
+    const game_id = game.rows[0].id;
+
+    const reviews = await client.query(
+      `SELECT * FROM review WHERE game_id = $1`,
+      [game_id]
+    );
+
+    console.log(reviews.rows);
+    res.status(200).json(reviews.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
@@ -100,8 +175,7 @@ app.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       { username: user.username, email: user.email },
-      SECRET_KEY,
-      { expiresIn: "1h" }
+      SECRET_KEY
     );
 
     const response = {
